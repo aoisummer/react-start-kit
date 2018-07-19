@@ -28,9 +28,9 @@ module.exports = {
     },
     mode: 'none',
     optimization: {
-        runtimeChunk: {
-            name: 'manifest'
-        },
+        // runtimeChunk: {
+            // name: 'manifest'
+        // },
         splitChunks: {
             cacheGroups: {
                 commons: {
