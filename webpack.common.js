@@ -4,7 +4,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 module.exports = {
-    entry: './src/main.jsx',
+    entry: './src/main.js',
     output: {
         filename: '[name].[chunkhash].js',
         path: path.resolve(__dirname, 'dist')
