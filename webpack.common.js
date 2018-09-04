@@ -15,8 +15,8 @@ module.exports = {
             loader: 'babel-loader',
             exclude: /node_modules/,
             query: {
-                // minified: true,
-                presets: ['env', 'react']
+                presets: ['@babel/preset-env', '@babel/preset-react'],
+                plugins: ['@babel/plugin-transform-regenerator']
             }
         }, {
             test: /\.css$/,
