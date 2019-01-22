@@ -1,11 +1,14 @@
 import '@babel/polyfill';
 import 'raf/polyfill';
-import './style.css';
+import './main.css';
 
 import React from 'react';
 import ReactDOM from 'react-dom';
 
 ReactDOM.render(
-    <div>Hello world.</div>,
+    <div>
+        <span className="logo"></span>
+        <span>Hello world.</span>
+    </div>,
     document.querySelector('#root')
 );
