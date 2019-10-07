@@ -1,21 +1,24 @@
 const path = require('path');
+
 const webpack = require('webpack');
-const webpackMerge = require('webpack-merge');
+const WebpackMerge = require('webpack-merge');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 
-module.exports = function (env, argv) {
-    let mode = env != null && env === 'production' ? 'production' : 'development';
-    let useHash = argv.hash != null;
-    return webpackMerge({
-        mode: mode,
-        devtool: mode === 'production' ? false : 'inline-source-map',
-        entry: './src/main.js',
+const packageData = require('./package.json');
+
+module.exports = (env, argv) => {
+    return WebpackMerge({
+        mode: 'none',
+        devtool: env === 'production' ? false : 'eval-source-map',
+        entry: {
+            main: (env === 'production' ? ['core-js/es/map', 'core-js/es/set', 'regenerator-runtime/runtime'] : []).concat(['./src/main.js'])
+        },
         output: {
-            filename: useHash ? 'assets/[name].[chunkhash:8].js' : 'assets/[name].js',
+            filename: 'assets/[name].js',
             path: path.resolve(__dirname, 'dist')
         },
         module: {
@@ -25,8 +28,11 @@ module.exports = function (env, argv) {
                     loader: 'babel-loader',
                     exclude: /node_modules/,
                     query: {
-                        presets: ['@babel/preset-env', '@babel/preset-react'],
-                        plugins: ['@babel/plugin-transform-regenerator']
+                        presets: [
+                            ['@babel/preset-env', env === 'production' ? { useBuiltIns: 'usage', corejs: 3, targets: packageData._browserslist } : { targets: packageData._browserslistDev }], /*exclude: ['@babel/plugin-transform-async-to-generator', '@babel/plugin-transform-regenerator']*/
+                            '@babel/preset-react'
+                        ],
+                        plugins: env === 'production' ? ['@babel/plugin-transform-regenerator'] : []
                     }
                 }, {
                     test: /\.css$/,
@@ -44,7 +50,7 @@ module.exports = function (env, argv) {
                             options: {
                                 plugins: [
                                     require('postcss-import'),
-                                    require('postcss-preset-env')({ autoprefixer: { flexbox: 'no-2009' } })
+                                    require('postcss-preset-env')({ features: { 'nesting-rules': true }, autoprefixer: { flexbox: 'no-2009', overrideBrowserslist: packageData._browserslist } })
                                 ]
                             }
                         }
@@ -52,12 +58,11 @@ module.exports = function (env, argv) {
                 }, {
                     test: /\.(png|jpe?g|gif)$/,
                     use: [
-                        { loader: 'file-loader', options: { name: useHash ? 'assets/[name].[hash:8].[ext]' : 'assets/[name].[ext]' } }
+                        { loader: 'file-loader', options: { name: 'assets/[name].[ext]' } }
                     ]
                 }
             ]
         },
-        mode: 'none',
         optimization: {
             // runtimeChunk: {
                 // name: 'manifest'
@@ -71,7 +76,7 @@ module.exports = function (env, argv) {
                     }
                 }
             },
-            minimize: mode === 'production',
+            minimize: env === 'production',
             minimizer: [
                 new UglifyJsPlugin(),
                 new OptimizeCSSAssetsPlugin()
@@ -80,17 +85,22 @@ module.exports = function (env, argv) {
         plugins: [
             new HtmlWebpackPlugin({
                 template: 'src/index.html',
-                minify: mode === 'production',
+                minify: env === 'production',
                 xhtml: true
             }),
             new MiniCssExtractPlugin({
-                filename: useHash ? 'assets/[name].[hash:8].css' : 'assets/[name].css'
+                filename: 'assets/[name].css'
             })
         ]
     },
-    mode === 'production' ? {
+    env === 'production' ?
+    {
+        mode: 'production',
         plugins: [
             new CleanWebpackPlugin(['dist'])
         ]
-    } : {});
+    } :
+    {
+        mode: 'development'
+    });
 };
