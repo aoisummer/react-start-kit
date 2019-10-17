@@ -1,5 +1,5 @@
 :root {
-    --font-family-default: Arial, sans-serif;
+    --font-family-default: system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
     --color-primary: #007bff;
     --color-secondary: #6c757d;
 }

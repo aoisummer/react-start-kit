@@ -15,7 +15,7 @@ module.exports = (env, argv) => {
         mode: 'none',
         devtool: env === 'production' ? false : 'eval-source-map',
         entry: {
-            main: (env === 'production' ? ['core-js/es/map', 'core-js/es/set', 'regenerator-runtime/runtime'] : []).concat(['./src/main.js'])
+            main: (env === 'production' ? ['core-js/es/map', 'core-js/es/set'] : []).concat(['regenerator-runtime/runtime', './src/main.js'])
         },
         output: {
             filename: 'assets/[name].js',
@@ -29,10 +29,9 @@ module.exports = (env, argv) => {
                     exclude: /node_modules/,
                     query: {
                         presets: [
-                            ['@babel/preset-env', env === 'production' ? { useBuiltIns: 'usage', corejs: 3, targets: packageData._browserslist } : { targets: packageData._browserslistDev }], /*exclude: ['@babel/plugin-transform-async-to-generator', '@babel/plugin-transform-regenerator']*/
+                            ['@babel/preset-env', { useBuiltIns: 'usage', corejs: 3 }],
                             '@babel/preset-react'
-                        ],
-                        plugins: env === 'production' ? ['@babel/plugin-transform-regenerator'] : []
+                        ]
                     }
                 }, {
                     test: /\.css$/,
@@ -50,7 +49,7 @@ module.exports = (env, argv) => {
                             options: {
                                 plugins: [
                                     require('postcss-import'),
-                                    require('postcss-preset-env')({ features: { 'nesting-rules': true }, autoprefixer: { flexbox: 'no-2009', overrideBrowserslist: packageData._browserslist } })
+                                    require('postcss-preset-env')({ features: { 'nesting-rules': true }, autoprefixer: { flexbox: 'no-2009' } })
                                 ]
                             }
                         }
