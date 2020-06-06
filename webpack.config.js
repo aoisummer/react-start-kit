@@ -4,7 +4,7 @@ const webpack = require('webpack');
 const WebpackMerge = require('webpack-merge');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+const TerserPlugin = require('terser-webpack-plugin');
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 
@@ -77,7 +77,7 @@ module.exports = (env, argv) => {
             },
             minimize: env === 'production',
             minimizer: [
-                new UglifyJsPlugin(),
+                new TerserPlugin({ extractComments: false }),
                 new OptimizeCSSAssetsPlugin()
             ]
         },
