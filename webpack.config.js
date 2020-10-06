@@ -11,20 +11,21 @@ const CleanWebpackPlugin = require('clean-webpack-plugin');
 const packageData = require('./package.json');
 
 module.exports = (env, argv) => {
+    const isProd = env === 'production';
     return WebpackMerge({
         mode: 'none',
-        devtool: env === 'production' ? false : 'eval-source-map',
+        devtool: isProd ? false : 'eval-source-map',
         entry: {
-            main: (env === 'production' ? ['core-js/es/map', 'core-js/es/set'] : []).concat(['regenerator-runtime/runtime', './src/main.js'])
+            main: (isProd ? ['core-js/es/map', 'core-js/es/set'] : []).concat(['regenerator-runtime/runtime', './src/main.js'])
         },
         output: {
-            filename: 'assets/[name].js',
+            filename: 'assets/js/[name].js',
             path: path.resolve(__dirname, 'dist')
         },
         module: {
             rules: [
                 {
-                    test: /\.jsx?$/,
+                    test: /\.(mjs|js|jsx)$/,
                     loader: 'babel-loader',
                     exclude: /node_modules/,
                     query: {
@@ -40,7 +41,7 @@ module.exports = (env, argv) => {
                         {
                             loader: MiniCssExtractPlugin.loader,
                             options: {
-                                publicPath: '../'
+                                publicPath: '../../'
                             }
                         },
                         'css-loader',
@@ -57,7 +58,7 @@ module.exports = (env, argv) => {
                 }, {
                     test: /\.(png|jpe?g|gif)$/,
                     use: [
-                        { loader: 'file-loader', options: { name: 'assets/[name].[ext]' } }
+                        { loader: 'file-loader', options: { name: 'assets/image/[name].[ext]' } }
                     ]
                 }
             ]
@@ -75,7 +76,7 @@ module.exports = (env, argv) => {
                     }
                 }
             },
-            minimize: env === 'production',
+            minimize: isProd,
             minimizer: [
                 new TerserPlugin({ extractComments: false }),
                 new OptimizeCSSAssetsPlugin()
@@ -84,15 +85,15 @@ module.exports = (env, argv) => {
         plugins: [
             new HtmlWebpackPlugin({
                 template: 'src/index.html',
-                minify: env === 'production',
+                minify: isProd,
                 xhtml: true
             }),
             new MiniCssExtractPlugin({
-                filename: 'assets/[name].css'
+                filename: 'assets/css/[name].css'
             })
         ]
     },
-    env === 'production' ?
+    isProd ?
     {
         mode: 'production',
         plugins: [
