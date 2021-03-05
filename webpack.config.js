@@ -6,7 +6,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
-const CleanWebpackPlugin = require('clean-webpack-plugin');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
 const packageData = require('./package.json');
 
@@ -97,7 +97,7 @@ module.exports = (env, argv) => {
     {
         mode: 'production',
         plugins: [
-            new CleanWebpackPlugin(['dist'])
+            new CleanWebpackPlugin()
         ]
     } :
     {
