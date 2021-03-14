@@ -1,5 +1,9 @@
 import './main.css';
 
+import 'core-js/es/map';
+import 'core-js/es/set';
+import 'regenerator-runtime/runtime';
+
 import React from 'react';
 import ReactDOM from 'react-dom';
 

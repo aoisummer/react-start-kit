@@ -16,7 +16,7 @@ module.exports = (env, argv) => {
         mode: 'none',
         devtool: isProd ? false : 'eval-source-map',
         entry: {
-            main: (isProd ? ['core-js/es/map', 'core-js/es/set'] : []).concat(['regenerator-runtime/runtime', './src/main.js'])
+            main: path.resolve(__dirname, 'src/main.js')
         },
         output: {
             filename: 'assets/js/[name].js',
