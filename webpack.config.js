@@ -1,7 +1,7 @@
 const path = require('path');
 
-const webpack = require('webpack');
-const WebpackMerge = require('webpack-merge');
+// const webpack = require('webpack');
+// const WebpackMerge = require('webpack-merge');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
@@ -12,8 +12,24 @@ const packageData = require('./package.json');
 
 module.exports = (env, argv) => {
     const isProd = env === 'production';
-    return WebpackMerge({
-        mode: 'none',
+    const plugins = [
+        new HtmlWebpackPlugin({
+            template: 'src/index.html',
+            minify: isProd,
+            xhtml: true
+        }),
+        new MiniCssExtractPlugin({
+            filename: 'assets/css/[name].css'
+        })
+    ];
+    if (isProd) {
+        plugins.push(
+            new CleanWebpackPlugin()
+        );
+    }
+
+    return {
+        mode: isProd ? 'production' : 'development',
         devtool: isProd ? false : 'eval-source-map',
         entry: {
             main: path.resolve(__dirname, 'src/main.js')
@@ -34,7 +50,8 @@ module.exports = (env, argv) => {
                             '@babel/preset-react'
                         ]
                     }
-                }, {
+                },
+                {
                     test: /\.css$/,
                     exclude: /node_modules/,
                     use: [
@@ -55,7 +72,8 @@ module.exports = (env, argv) => {
                             }
                         }
                     ]
-                }, {
+                },
+                {
                     test: /\.(png|jpe?g|gif)$/,
                     use: [
                         { loader: 'file-loader', options: { name: 'assets/image/[name].[ext]' } }
@@ -64,9 +82,6 @@ module.exports = (env, argv) => {
             ]
         },
         optimization: {
-            // runtimeChunk: {
-                // name: 'manifest'
-            // },
             splitChunks: {
                 cacheGroups: {
                     commons: {
@@ -82,25 +97,6 @@ module.exports = (env, argv) => {
                 new OptimizeCSSAssetsPlugin()
             ]
         },
-        plugins: [
-            new HtmlWebpackPlugin({
-                template: 'src/index.html',
-                minify: isProd,
-                xhtml: true
-            }),
-            new MiniCssExtractPlugin({
-                filename: 'assets/css/[name].css'
-            })
-        ]
-    },
-    isProd ?
-    {
-        mode: 'production',
-        plugins: [
-            new CleanWebpackPlugin()
-        ]
-    } :
-    {
-        mode: 'development'
-    });
+        plugins
+    };
 };

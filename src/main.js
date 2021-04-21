@@ -7,15 +7,23 @@ import 'regenerator-runtime/runtime';
 import React from 'react';
 import ReactDOM from 'react-dom';
 
+function App() {
+    React.useEffect(() => {
+        (async () => {
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            console.log('next.');
+        })().catch(console.error);
+    }, []);
+
+    return (
+        <div>
+            <span className="logo"></span>
+            <span>Hello world.</span>
+        </div>
+    );
+}
+
 ReactDOM.render(
-    <div>
-        <span className="logo"></span>
-        <span>Hello world.</span>
-    </div>,
+    <App />,
     document.querySelector('#root')
 );
-
-(async function () {
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    console.log('next.');
-})().catch(console.error);
